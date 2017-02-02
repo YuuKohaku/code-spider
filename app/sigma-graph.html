@@ -1,0 +1,110 @@
+<html>
+<head>
+<div id="container">
+  <style>
+    #graph-container {
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      position: absolute;
+    }
+  </style>
+  <div id="graph-container"></div>
+</div>
+</head>
+<body>
+<div id="container"></div>
+<script src="./lib/sigma.js"></script>
+<script src="../lib/plugins/sigma.renderers.customEdgeShapes.min.js"></script>
+<script src="./lib/plugins/sigma.parsers.json.min.js"></script>
+<script src="../lib/plugins/sigma.renderers.edgeLabels.min.js"></script>
+<script src="../lib/plugins/sigma.renderers.customShapes.min.js"></script>
+<script src="../lib/plugins/sigma.plugins.dragNodes.min.js"></script>
+<script>
+sigma.classes.graph.addMethod('neighbors', function(nodeId) {
+    var k,
+        neighbors = {},
+        index = this.outNeighborsIndex[nodeId] || {};
+
+    for (k in index)
+      neighbors[k] = this.nodesIndex[k];
+
+    return neighbors;
+  });
+
+sigma.parsers.json('./data/output.json', {
+  renderer: {
+    container: document.getElementById('graph-container'),
+    type: 'canvas'
+  },
+  // container: 'graph-container',
+      settings: {
+        minArrowSize: 5,
+        maxArrowSize: 5,
+        // defaultLabelSize : 18,
+        drawEdgeLabels: true,
+        edgeHoverSizeRatio: 2,
+        maxEdgeSize: 1,
+        minEdgeSize: 0.1,
+        enableEdgeHovering: true,
+        edgeLabelSize: 'fixed',
+        defaultEdgeLabelSize: 16
+    }
+},
+function(s) {
+      var dragListener = sigma.plugins.dragNodes(s, s.renderers[0]);
+
+      s.graph.nodes().forEach(function(n) {
+        n.originalColor = n.color;
+      });
+      s.graph.edges().forEach(function(e) {
+        e.originalColor = e.color;
+        e.hidden_label = e.label;
+        e.label = undefined;
+      });
+
+      s.bind('clickNode', function(e) {
+        var nodeId = e.data.node.id,
+            toKeep = s.graph.neighbors(nodeId);
+        toKeep[nodeId] = e.data.node;
+
+        s.graph.nodes().forEach(function(n) {
+          if (toKeep[n.id])
+            n.color = n.originalColor;
+          else
+            n.color = '#eee';
+        });
+
+        s.graph.edges().forEach(function(e) {
+          if (e.source == nodeId && toKeep[e.target])
+          {
+              e.color = e.originalColor;
+              e.label = e.hidden_label;
+          }
+          else{
+            e.color = '#eee';
+            e.label = undefined;
+          }
+        });
+        // console.log(e);
+        s.refresh();
+      });
+
+      s.bind('clickStage', function(e) {
+        s.graph.nodes().forEach(function(n) {
+          n.color = n.originalColor;
+        });
+
+        s.graph.edges().forEach(function(e) {
+          e.color = e.originalColor;
+          e.label = undefined;
+        });
+
+        s.refresh();
+      });
+      console.log(s);
+    });
+</script>
+</body>
+</html>

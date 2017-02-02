@@ -1,0 +1,30 @@
+{
+  "name": "code-spider",
+  "version": "1.0.0",
+  "description": "Code interlinks detection tool",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YuuKohaku/code-spider.git"
+  },
+  "author": "V.D.",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YuuKohaku/code-spider/issues"
+  },
+  "homepage": "https://github.com/YuuKohaku/code-spider#readme",
+  "dependencies": {
+    "bluebird": "^3.4.7",
+    "express": "^4.14.0",
+    "fs-finder": "^1.8.1",
+    "lodash": "^4.17.4",
+    "minimist": "^1.2.0",
+    "redbird": "^0.6.15"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
